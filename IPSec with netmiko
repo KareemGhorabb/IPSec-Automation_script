@@ -1,0 +1,32 @@
+from netmiko import ConnectHandler
+Router= {
+    "device_type": "cisco_ios",
+    "ip": "10.2.2.2",
+    "username": "we",
+    "password": "we"
+}
+net_connect = ConnectHandler(**Router)
+ipsec_commands =[
+    'conf t',
+    'access-list 100 permit ip 192.168.3.0 0.0.0.255 192.168.31.0 0.0.0.255',
+    'crypt isakmp policy 10 ',
+    'auth pre-s',
+    'encryp aes 256',
+    'hash sha',
+    'group 5',
+    'exi',
+    'crypto isakmp key vpnpa address 10.1.1.2',
+    'crypto ipsec trans vpntra esp-aes esp-sha',
+    'exi',
+    'crypto map vpnmap 10 ipsec-isa',
+    'set peer 10.1.1.2',
+    'set transform vpntra',
+    'match address 100',
+    'exi',
+    'int f0/1',
+    'crypt map vpnmap'
+]
+
+output=net_connect.send_config_set(ipsec_commands)
+print(output)
+net_connect.disconnect()
